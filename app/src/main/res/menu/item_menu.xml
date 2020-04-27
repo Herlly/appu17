@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+    android:id="@+id/tab_collect"
+    android:title="收藏"
+    android:icon="@mipmap/collect_hover" />
+    <item
+        android:id="@+id/tab_history"
+        android:title="历史"
+        android:icon="@mipmap/history" />
+</menu>
