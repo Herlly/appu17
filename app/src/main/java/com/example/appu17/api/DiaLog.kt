@@ -27,9 +27,7 @@ object DiaLog {
          val detail_label=bottomSheetDialog.findViewById<LabelsView>(R.id.Detail_label)
          val detail_author=bottomSheetDialog.findViewById<TextView>(R.id.Detail_author)
          val recyclerView=bottomSheetDialog.findViewById<RecyclerView>(R.id.detail_list)
-
          recyclerView?.layoutManager= GridLayoutManager(mcontext,4)
-
          CoroutineScope(Dispatchers.Main).launch {
              detail_name?.text=detailComic?.data?.returnData?.comic?.name
              detail_label?.setLabels(detailComic?.data?.returnData?.comic?.theme_ids)

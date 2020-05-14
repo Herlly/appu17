@@ -9,10 +9,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.appu17.api.Internet
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -114,7 +116,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.rank->{
-                startActivity(Intent(this,RankListActivity::class.java))
+                if(Internet.isNetworkConnected(this)){
+                    startActivity(Intent(this,RankListActivity::class.java))
+                }else{
+                    Toast.makeText(this,"当前无网络连接",Toast.LENGTH_SHORT).show()
+                }
             }
             R.id.edit->{
                 if(edit_layout.visibility==View.VISIBLE){
@@ -130,11 +136,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             R.id.search->{
-                startActivity(Intent(this,SearchActivity::class.java))
+                if(Internet.isNetworkConnected(this)){
+                    startActivity(Intent(this,SearchActivity::class.java))
+                }else{
+                    Toast.makeText(this,"当前无网络连接",Toast.LENGTH_SHORT).show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        fragment1.update()
+        fragment2.update()
+    }
 }

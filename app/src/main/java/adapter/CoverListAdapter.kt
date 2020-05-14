@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.appu17.R
 import com.example.appu17.api.ApiClient
 import com.example.appu17.api.DiaLog
 import com.example.appu17.api.GetData
+import com.example.appu17.api.Internet
 import domain.DetailComic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,12 +44,12 @@ class CoverListAdapter(private var mData:MutableList<CoverInfo>, private var mCo
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val file= mData.get(position).path.let { it->File(it) }
+        val file= File(mData[position].path)
         Glide.with(mContext).load(file).into(holder.cover)
-        holder.collect_name.text=mData.get(position).name
+        holder.collect_name.text= mData[position].name
         holder.checkBox.isChecked=false
-        if(CoverManager.instances.search_CollectInfo(mData.get(position).name)!= null){
-            holder.index.text="读到第"+CoverManager.instances.search_CollectInfo(mData.get(position).name).index+"话"
+        if(CoverManager.instances.search_CollectInfo(mData[position].name)!= null){
+            holder.index.text="读到第"+CoverManager.instances.search_CollectInfo(mData[position].name).index+"话"
         }else{
             holder.index.text="未阅读"
         }
@@ -68,8 +70,12 @@ class CoverListAdapter(private var mData:MutableList<CoverInfo>, private var mCo
         }
 
         holder.itemView.setOnClickListener(View.OnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
-                DiaLog.show(mContext,GetData.getDetailComic(mData.get(position).comic_Id))
+            if(Internet.isNetworkConnected(mContext)){
+                CoroutineScope(Dispatchers.Main).launch {
+                    DiaLog.show(mContext,GetData.getDetailComic(mData[position].comic_Id))
+                }
+            }else{
+                Toast.makeText(mContext,"当前无网络连接", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -86,7 +92,7 @@ class CoverListAdapter(private var mData:MutableList<CoverInfo>, private var mCo
     fun delete(){
         for(i in 0 until mData.size){
             if(mList?.get(i)==true){
-                CoverManager.instances.delete_CoverInfo(mData.get(i).name)
+                CoverManager.instances.delete_CoverInfo(mData[i].name)
                 notifyItemRemoved(i)
             }
         }

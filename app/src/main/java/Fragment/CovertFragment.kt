@@ -56,4 +56,7 @@ class CovertFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
         adapter?.update()
         cover_refresh.isRefreshing=false
     }
+    fun update(){
+        adapter?.update()
+    }
 }

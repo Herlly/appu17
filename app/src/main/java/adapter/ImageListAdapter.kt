@@ -39,7 +39,6 @@ class ImageListAdapter(val mComicImage: ComicImage,val mContext: Context,val mVi
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.image_list_item,parent,false))
     }
     lateinit var mDiaLog:Dialog
-    var flag=ViewPager2.ORIENTATION_HORIZONTAL
     override fun getItemCount(): Int {
         return mComicImage.data.returnData.image_list.size
     }

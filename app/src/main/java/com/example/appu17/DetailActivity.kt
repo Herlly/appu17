@@ -32,11 +32,12 @@ class DetailActivity : AppCompatActivity() {
     lateinit var detailComic: DetailComic
     lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_detail)
         val intent=intent
         val comic_Id=intent.getStringExtra("chapter_Id")
-
         CoroutineScope(Dispatchers.Main).launch {
             val comicImage= GetData.getComicImage(comic_Id)
             ViewPager.adapter=ImageListAdapter(comicImage,this@DetailActivity,ViewPager)

@@ -17,6 +17,7 @@ import com.example.appu17.R
 import com.example.appu17.api.ApiClient
 import com.example.appu17.api.DiaLog
 import com.example.appu17.api.GetData
+import com.example.appu17.api.Internet
 import domain.DetailComic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,18 +52,18 @@ class CollectListAdapter(private var mData:MutableList<CollectInfo>,private var 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         this.holder=holder
-        val path=mData.get(position).path
+        val path= mData[position].path
         if(ischeckbox){
             holder.checkBox.visibility=View.VISIBLE
         }else{
             holder.checkBox.visibility=View.GONE
         }
         Glide.with(mContext).load(path).into(holder.ComicCover)
-        holder.ComicName.text=mData.get(position).name
-        holder.Comic_intro.text=mData.get(position).info
-        holder.Comic_Tag.setLabels(mData.get(position).tags)
+        holder.ComicName.text= mData[position].name
+        holder.Comic_intro.text= mData[position].info
+        holder.Comic_Tag.setLabels(mData[position].tags)
         holder.checkBox.isChecked=false
-        holder.index.text="阅读到第"+mData.get(position).index+"话"
+        holder.index.text="阅读到第"+ mData[position].index+"话"
         initList()
 
         holder.checkBox.setOnCheckedChangeListener{buttonView, isChecked ->
@@ -74,16 +75,25 @@ class CollectListAdapter(private var mData:MutableList<CollectInfo>,private var 
         }
 
         holder.itemView.setOnClickListener(View.OnClickListener {
-            val intent= Intent(mContext, DetailActivity::class.java)
-            CoroutineScope(Dispatchers.Main).launch {
-                val po=mData.get(position).index.toInt()
-                intent.putExtra("chapter_Id",GetData.getDetailComic(mData.get(position).comic_Id).data.returnData.chapter_list.get(po-1).chapter_id)
-                mContext.startActivity(intent)
+            if(Internet.isNetworkConnected(mContext)){
+                val intent= Intent(mContext, DetailActivity::class.java)
+                CoroutineScope(Dispatchers.Main).launch {
+                    val po= mData[position].index.toInt()
+                    intent.putExtra("chapter_Id",
+                        GetData.getDetailComic(mData[position].comic_Id).data.returnData.chapter_list[po-1].chapter_id)
+                    mContext.startActivity(intent)
+                }
+            }else{
+                Toast.makeText(mContext,"当前无网络连接",Toast.LENGTH_SHORT).show()
             }
         })
         holder.itemView.setOnLongClickListener(View.OnLongClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
-                DiaLog.show(mContext,GetData.getDetailComic(mData.get(position).comic_Id))
+            if(Internet.isNetworkConnected(mContext)){
+                CoroutineScope(Dispatchers.Main).launch {
+                    DiaLog.show(mContext,GetData.getDetailComic(mData[position].comic_Id))
+                }
+            }else{
+                Toast.makeText(mContext,"当前无网络连接",Toast.LENGTH_SHORT).show()
             }
             true
         })
@@ -92,7 +102,7 @@ class CollectListAdapter(private var mData:MutableList<CollectInfo>,private var 
     fun delete(){
         for(i in 0 until mData.size){
             if(mList?.get(i)==true){
-               CoverManager.instances.delete_CollectInfo(mData.get(i).name)
+               CoverManager.instances.delete_CollectInfo(mData[i].name)
                 notifyItemRemoved(i)
             }
         }

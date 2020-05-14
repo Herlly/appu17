@@ -46,7 +46,9 @@ class CollectFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
         @JvmStatic
         fun newInstance() = CollectFragment()
     }
-
+    fun update(){
+        adapter?.update()
+    }
     override fun onRefresh() {
         adapter?.update()
         collect_refresh.isRefreshing=false
